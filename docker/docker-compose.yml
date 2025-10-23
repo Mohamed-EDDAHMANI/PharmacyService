@@ -1,0 +1,66 @@
+version: "3.9"
+
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: pharmacyservice-app:dev
+    container_name: pharmacyService_app
+    env_file:
+      - ../.env
+    environment:
+      - NODE_ENV=development
+      - PORT=3002
+      - CHOKIDAR_USEPOLLING=true
+    ports:
+      - "3002:3002"
+    volumes:
+      - ../src:/app/src
+      - ../package.json:/app/package.json
+      - ../package-lock.json:/app/package-lock.json
+    command: ["npm", "run", "dev"]
+    depends_on:
+      - mongo
+      - redis
+    networks:
+      - pharmacyService-net
+
+  mongo:
+    image: mongo:6.0
+    logging:
+      driver: "none"
+    container_name: pharmacyService_mongo
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:-admin}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:-password}
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE:-pharmacyService}
+    volumes:
+      - pharma_mongo_data:/data/db
+    networks:
+      - pharmacyService-net
+    ports:
+      # Port 27019 mn bara
+      - "27019:27017"
+    command: ["mongod", "--bind_ip_all"]
+
+  redis:
+    image: redis:7-alpine
+    container_name: pharmacyService_redis
+    restart: unless-stopped
+    ports:
+      # Port 6381 mn bara
+      - "6381:6379"
+    volumes:
+      - pharma_redis_data:/data
+    networks:
+      - pharmacyService-net
+
+volumes:
+  pharma_mongo_data:
+  pharma_redis_data:
+
+networks:
+  pharmacyService-net:
+    driver: bridge
