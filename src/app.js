@@ -13,7 +13,7 @@ import { initRedis } from './config/redis.js';
 
 
 // ===== Import Routes =====
-// import routes from "./routes/index.js";
+import routes from "./routes/index.js";
 
 // ===== Initialize App =====
 const app = express();
@@ -35,7 +35,7 @@ app.get("/health", (req, res) => res.status(200).send("OK"));
 app.get("/", (req, res) => res.send("pharmacyservice API is running 🚀"));
 
 // ===== API Routes =====
-// app.use('/api', routes);
+app.use('/v1', routes);
 
 
 // ===== 404 Handler =====

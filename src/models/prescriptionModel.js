@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+import mongoose from 'mongoose';
+const { Schema } = mongoose;
 
 // Sub-document l-dwa
 const medicationSchema = new Schema({
@@ -46,4 +46,4 @@ const prescriptionSchema = new Schema(
     { timestamps: true }
 );
 
-module.exports = mongoose.model('Prescription', prescriptionSchema);
+export default mongoose.model('Prescription', prescriptionSchema);
